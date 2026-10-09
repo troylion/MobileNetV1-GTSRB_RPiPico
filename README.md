@@ -68,7 +68,8 @@ If you want to emulate different types of upsets (such as multiple bit upsets, s
 
 Microcontrollers do not have traditional file systems. Instead, the `.tflite` model and the testing images must be converted into C-byte arrays and compiled directly into the binary firmware. 
 
-- **`model_data.h`**: Contains the complete `.tflite` MobileNetV1 model serialized as an `unsigned char` array (e.g., `const unsigned char model_data[] = { 0x1c, 0x00, ... };`). The firmware reads this array to initialize the neural network in SRAM.
+- **`model_data.h`**: Contains the complete `.tflite` MobileNetV1 model serialized as an `unsigned char` array (e.g., `const unsigned char model_data[] = { 0x1c, 0x00, ... };`). The firmware reads this array to initialize the neural network in SRAM. 
+  *(Origin: The included MobileNetV1 model was trained from scratch on the GTSRB dataset using Google Colab. It was then converted into a `.tflite` file, and finally converted into this C-byte array header file using the `xxd` command in Git Bash).*
 - **`test_images.h`**: Contains the GTSRB test images and their ground-truth labels. The images are stored as flat 1D arrays of bytes, representing the raw pixel data.
 
 ### How to use a different model or dataset:
