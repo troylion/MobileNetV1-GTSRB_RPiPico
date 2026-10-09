@@ -1,0 +1,27 @@
+# C++ Build output
+build/
+*.uf2
+*.elf
+*.bin
+*.hex
+*.map
+*.o
+*.a
+*.dis
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+.env
+venv/
+env/
+
+# Output Data (ignore large local runs)
+campaign_results/
+*.csv
+!sample_results/*.csv  # Don't ignore the sample results folder
+
+# OS generated files
+.DS_Store
+Thumbs.db

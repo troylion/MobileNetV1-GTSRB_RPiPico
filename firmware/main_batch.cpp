@@ -1,11 +1,10 @@
-
-/* MobileNet GTSRB Batch Accuracy Tester
-
-   Tests multiple embedded images and calculates accuracy
-   Supports host-controlled SWIFI (Software Implemented Fault Injection)
-   via USB serial commands.
-*/
-
+/* 
+ * Author: Kristian Bailey, North Carolina A&T State University
+ * Project: MobileNet GTSRB SWIFI Framework
+ * Description: Tests multiple embedded images and calculates accuracy.
+ *              Supports host-controlled SWIFI (Software Implemented Fault Injection)
+ *              via USB serial commands.
+ */
 #include "pico/stdlib.h"
 #include <cstdio>
 #include <cstring>

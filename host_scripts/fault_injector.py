@@ -1,4 +1,7 @@
 """
+Author: Kristian Bailey, North Carolina A&T State University
+Project: MobileNet GTSRB SWIFI Framework
+
 TFLite Fault Injection Tool v2
 ===============================
 Alternative implementation that directly accesses buffer data
