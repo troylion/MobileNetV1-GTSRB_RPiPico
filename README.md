@@ -126,3 +126,24 @@ Run the automated tensor sweep:
 python host_scripts/run_tensor_sweep.py
 ```
 *The script will automatically detect the Pico COM port, generate faults, and log the accuracy results to the `campaign_results/` directory.*
+
+## License
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
+## Citation
+
+*(Note: We are currently preparing a formal publication based on this repository. Once published, we will update this section with the official academic citation.)*
+
+If you use this repository or SWIFI framework in your research in the meantime, please cite this repository directly:
+
+```bibtex
+@misc{MobileNet_GTSRB_SWIFI_2024,
+  author = {Your Name/Institution},
+  title = {MobileNetV1 GTSRB Fault Injection on Raspberry Pi Pico},
+  year = {2024},
+  publisher = {GitHub},
+  journal = {GitHub repository},
+  howpublished = {\url{https://github.com/troylion/MobileNetV1-GTSRB_RPiPico}}
+}
+```
