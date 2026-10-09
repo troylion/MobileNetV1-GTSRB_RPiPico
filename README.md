@@ -58,6 +58,21 @@ If you want to emulate different types of upsets (such as multiple bit upsets, s
 2. **`host_scripts/run_campaign.py`**: Modify the payload sent via the `INJECT` command if your new fault model requires more parameters (e.g., sending a specific mask or value instead of just a bit position).
 3. **`firmware/main_batch.cpp`**: This is where the fault is actually applied in RAM. Locate the section that handles the `INJECT:` command. Currently, it uses an XOR operation to flip a single bit (`fault_buffer[byte_within] ^= (1 << bit_in_byte);`). You would change this logical operation depending on your fault. For example, to simulate a stuck-at-0 fault, you might use a bitwise AND (`fault_buffer[byte_within] &= ~(1 << bit_in_byte);`).
 
+## Swapping the Model or Images (C-Byte Arrays)
+
+Microcontrollers do not have traditional file systems. Instead, the `.tflite` model and the testing images must be converted into C-byte arrays and compiled directly into the binary firmware. 
+
+- **`model_data.h`**: Contains the complete `.tflite` MobileNetV1 model serialized as an `unsigned char` array (e.g., `const unsigned char model_data[] = { 0x1c, 0x00, ... };`). The firmware reads this array to initialize the neural network in SRAM.
+- **`test_images.h`**: Contains the GTSRB test images and their ground-truth labels. The images are stored as flat 1D arrays of bytes, representing the raw pixel data.
+
+### How to use a different model or dataset:
+If you want to run this experiment on a different neural network (like ResNet) or a different dataset (like CIFAR-10), you can simply swap out these header files:
+1. Train and quantize your new `.tflite` model.
+2. Use a command line tool like `xxd` to convert your `.tflite` file into a C-array (e.g., `xxd -i my_new_model.tflite > model_data.h`).
+3. Convert your new test images into a similar C-array format and replace `test_images.h`.
+4. Update `model_settings.h` to reflect the new image dimensions, number of channels, and category count.
+5. Recompile your firmware using CMake and flash the new `.uf2` file to the Pico!
+
 ## Replication Guide
 
 ### 1. Setup Pico SDK & TFLM
