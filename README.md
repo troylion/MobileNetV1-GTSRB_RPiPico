@@ -8,6 +8,10 @@ The goal of this experiment is to evaluate the robustness of a quantized MobileN
 
 A host PC orchestrates the campaign by sending serial commands to the Raspberry Pi Pico. The Pico receives the specific tensor, byte offset, and bit to flip, injects the fault directly into its SRAM (where the model is loaded), evaluates a batch of embedded test images, reports the accuracy, and restores the original weight.
 
+## What is SWIFI?
+
+SWIFI stands for **Software-Implemented Fault Injection**. It is a technique used to evaluate how a system (like a neural network) behaves when hardware faults occur, without needing expensive physical fault injection equipment like lasers or radiation beams. Instead of physically causing a bit-flip in the hardware, the software artificially modifies a value in memory (SRAM) to simulate the effect of a hardware fault. This allows for precise, repeatable, and automated testing of a system's vulnerability to errors like Single Event Upsets (SEUs).
+
 ## Repository Structure
 
 If you are setting up this repository from scratch, your directory should be organized as follows:
@@ -46,18 +50,45 @@ These scripts run on your PC. They require `pyserial`, `numpy`, `tflite`, and `f
 * **`run_campaign_parallel.py` & `run_tensor_sweep.py`**: Multi-threaded versions of the campaign script. They detect multiple Picos plugged into the host and distribute the fault queue across them. `run_tensor_sweep.py` explicitly cycles through every weight tensor in the model to find the most vulnerable layers.
 * **`analyze_sweep.py`**: A simple data analysis script that reads the generated CSV results and calculates the percentage of faults that caused critical accuracy degradation.
 
+## Modifying the Code for Different Fault Models
+
+If you want to emulate different types of upsets (such as multiple bit upsets, stuck-at faults, or zeroing out entire filters), you will need to adjust the following files:
+
+1. **`host_scripts/fault_injector.py`**: This script generates the fault parameters. It already contains skeleton functions for `fault_zero_filter`, `fault_noise`, and `fault_clamp`. You can modify the random generation logic to compute parameters for your specific fault model.
+2. **`host_scripts/run_campaign.py`**: Modify the payload sent via the `INJECT` command if your new fault model requires more parameters (e.g., sending a specific mask or value instead of just a bit position).
+3. **`firmware/main_batch.cpp`**: This is where the fault is actually applied in RAM. Locate the section that handles the `INJECT:` command. Currently, it uses an XOR operation to flip a single bit (`fault_buffer[byte_within] ^= (1 << bit_in_byte);`). You would change this logical operation depending on your fault. For example, to simulate a stuck-at-0 fault, you might use a bitwise AND (`fault_buffer[byte_within] &= ~(1 << bit_in_byte);`).
+
 ## Replication Guide
 
-1. **Setup Pico SDK & TFLM**: Ensure you have the Raspberry Pi Pico SDK installed and configured, alongside the `pico-tflmicro` library.
-2. **Compile Firmware**: Use CMake to compile `main_batch.cpp`.
-   ```bash
-   mkdir build && cd build
-   cmake ..
-   make mobilenet_gtsrb
-   ```
-3. **Flash the Pico**: Drag and drop the resulting `.uf2` file onto your Raspberry Pi Pico.
-4. **Run a Campaign**: Connect the Pico via USB. Install Python dependencies (`pip install pyserial numpy tflite flatbuffers`). Run the sweep:
-   ```bash
-   python host_scripts/run_tensor_sweep.py
-   ```
-   *The script will automatically detect the Pico COM port, generate faults, and log results to `campaign_results/`.*
+### 1. Setup Pico SDK & TFLM
+Ensure you have the Raspberry Pi Pico SDK installed and configured, alongside the `pico-tflmicro` library.
+
+### 2. Compile Firmware (Creating .uf2 and .elf files)
+To build the project and generate the executable files, use CMake:
+```bash
+# Create a build directory
+mkdir build && cd build
+
+# Configure CMake (make sure your PICO_SDK_PATH is set)
+cmake ..
+
+# Build the executable
+make mobilenet_gtsrb
+```
+This process will generate several files in the `build/` directory, including:
+- **`mobilenet_gtsrb.elf`**: The executable linked file, useful for debugging with GDB or OpenOCD.
+- **`mobilenet_gtsrb.uf2`**: The USB Flashing Format file, used to easily program the Pico over USB.
+
+### 3. Flash and Run on the Raspberry Pi Pico
+1. While unplugged, hold down the **BOOTSEL** button on your Raspberry Pi Pico.
+2. While continuing to hold BOOTSEL, plug the Pico into your computer's USB port.
+3. Release the BOOTSEL button. The Pico will mount as a USB Mass Storage Device (usually named `RPI-RP2`).
+4. Drag and drop the `mobilenet_gtsrb.uf2` file onto the `RPI-RP2` drive.
+5. The Pico will automatically disconnect, reboot, and immediately start running the firmware.
+
+### 4. Run a Campaign
+Once the Pico is running, connect to it using the host scripts. Install Python dependencies (`pip install pyserial numpy tflite flatbuffers`). Run the sweep:
+```bash
+python host_scripts/run_tensor_sweep.py
+```
+*The script will automatically detect the Pico COM port, generate faults, and log results to `campaign_results/`.*
