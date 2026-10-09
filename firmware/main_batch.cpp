@@ -9,9 +9,9 @@
 #include <cstdio>
 #include <cstring>
 
-#include "model_data.h"
+#include "model_data_unbiased.h"
 #include "model_settings.h"
-#include "test_images.h"
+#include "test_images_unbiased.h"
 
 #include "tensorflow/lite/micro/micro_interpreter.h"
 #include "tensorflow/lite/micro/micro_log.h"
@@ -185,7 +185,7 @@ int main() {
 
   // Load model
   printf("Loading model...\n");
-  model = tflite::GetModel(model_data);
+  model = tflite::GetModel(model_data_unbiased);
   if (model->version() != TFLITE_SCHEMA_VERSION) {
     printf("ERROR: Model version mismatch\n");
     while (1)
