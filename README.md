@@ -86,9 +86,15 @@ This process will generate several files in the `build/` directory, including:
 4. Drag and drop the `mobilenet_gtsrb.uf2` file onto the `RPI-RP2` drive.
 5. The Pico will automatically disconnect, reboot, and immediately start running the firmware.
 
-### 4. Run a Campaign
-Once the Pico is running, connect to it using the host scripts. Install Python dependencies (`pip install pyserial numpy tflite flatbuffers`). Run the sweep:
+### 4. Run a SWIFI Campaign (Using the Provided Flatbuffer Fault Injection)
+*Note: If you are using an alternative fault injection method (such as GDB/debugger-based injection, or hardcoding upsets directly in the C++ firmware), you will not run these Python campaign scripts. You will simply flash your firmware (like `main_golden.cpp`) and interact with it via your debugger or serial monitor.*
+
+If you are using the flatbuffer-based SWIFI method included in this repository, once the Pico is running, connect to it using the host scripts. Install the Python dependencies:
+```bash
+pip install pyserial numpy tflite flatbuffers
+```
+Run the automated tensor sweep:
 ```bash
 python host_scripts/run_tensor_sweep.py
 ```
-*The script will automatically detect the Pico COM port, generate faults, and log results to `campaign_results/`.*
+*The script will automatically detect the Pico COM port, generate faults, and log the accuracy results to the `campaign_results/` directory.*
