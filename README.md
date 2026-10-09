@@ -94,18 +94,22 @@ mkdir build && cd build
 # Configure CMake (make sure your PICO_SDK_PATH is set)
 cmake ..
 
-# Build the executable
-make mobilenet_gtsrb
+# Build the specific executable you want
+make mobilenet_gtsrb_batch
+make mobilenet_gtsrb_golden
 ```
-This process will generate several files in the `build/` directory, including:
-- **`mobilenet_gtsrb.elf`**: The executable linked file, useful for debugging with GDB or OpenOCD.
-- **`mobilenet_gtsrb.uf2`**: The USB Flashing Format file, used to easily program the Pico over USB.
+This process will generate files in the `build/` directory. There are two primary targets:
+
+- **`mobilenet_gtsrb_batch.uf2`**: This is the SWIFI-enabled firmware. When booted, it expects serial input (`INJECT:...`) from the Python host scripts before it will evaluate the dataset.
+- **`mobilenet_gtsrb_golden.uf2`**: This is the clean baseline firmware. It runs autonomously on its own without SWIFI fault injection or serial input. Use this to establish a baseline or if you are doing GDB fault injection.
+
+Each target also generates an `.elf` file (e.g., `mobilenet_gtsrb_golden.elf`), which is useful for debugging with GDB or OpenOCD.
 
 ### 3. Flash and Run on the Raspberry Pi Pico
 1. While unplugged, hold down the **BOOTSEL** button on your Raspberry Pi Pico.
 2. While continuing to hold BOOTSEL, plug the Pico into your computer's USB port.
 3. Release the BOOTSEL button. The Pico will mount as a USB Mass Storage Device named `RPI-RP2` (the default for the RP2040).
-4. Drag and drop the `mobilenet_gtsrb.uf2` file onto the `RPI-RP2` drive.
+4. Drag and drop the desired `.uf2` file (e.g., `mobilenet_gtsrb_batch.uf2`) onto the `RPI-RP2` drive.
 5. The Pico will automatically disconnect, reboot, and immediately start running the firmware.
 
 ### 4. Run a SWIFI Campaign (Using the Provided Flatbuffer Fault Injection)

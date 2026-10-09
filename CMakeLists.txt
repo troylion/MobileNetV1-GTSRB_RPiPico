@@ -4,35 +4,32 @@ project(mobilenet_gtsrb C CXX ASM)
 set(CMAKE_C_STANDARD 11)
 set(CMAKE_CXX_STANDARD 11)
 
-add_executable(mobilenet_gtsrb "")
-
-target_include_directories(mobilenet_gtsrb
-  PRIVATE
-  ${CMAKE_CURRENT_LIST_DIR}/.
+# Target 1: Golden Baseline (No SWIFI)
+add_executable(mobilenet_gtsrb_golden "")
+target_include_directories(mobilenet_gtsrb_golden PRIVATE ${CMAKE_CURRENT_LIST_DIR}/firmware)
+set_target_properties(mobilenet_gtsrb_golden PROPERTIES 
+  COMPILE_FLAGS "-fno-rtti -fno-exceptions -fno-threadsafe-statics -nostdlib"
 )
-
-set_target_properties(
-  mobilenet_gtsrb
-  PROPERTIES
-  COMPILE_FLAGS -fno-rtti
-  COMPILE_FLAGS -fno-exceptions
-  COMPILE_FLAGS -fno-threadsafe-statics
-  COMPILE_FLAGS -nostdlib
+target_sources(mobilenet_gtsrb_golden PRIVATE 
+  ${CMAKE_CURRENT_LIST_DIR}/firmware/main_golden.cpp
+  ${CMAKE_CURRENT_LIST_DIR}/firmware/model_settings.cpp
 )
+target_link_libraries(mobilenet_gtsrb_golden pico-tflmicro pico_stdlib)
+pico_enable_stdio_usb(mobilenet_gtsrb_golden 1)
+pico_enable_stdio_uart(mobilenet_gtsrb_golden 1)
+pico_add_extra_outputs(mobilenet_gtsrb_golden)
 
-target_sources(mobilenet_gtsrb
-  PRIVATE
-  ${CMAKE_CURRENT_LIST_DIR}/main_golden.cpp
-  ${CMAKE_CURRENT_LIST_DIR}/model_settings.cpp
+# Target 2: Batch SWIFI (Expects serial commands)
+add_executable(mobilenet_gtsrb_batch "")
+target_include_directories(mobilenet_gtsrb_batch PRIVATE ${CMAKE_CURRENT_LIST_DIR}/firmware)
+set_target_properties(mobilenet_gtsrb_batch PROPERTIES 
+  COMPILE_FLAGS "-fno-rtti -fno-exceptions -fno-threadsafe-statics -nostdlib"
 )
-
-target_link_libraries(
-  mobilenet_gtsrb
-  pico-tflmicro
-  pico_stdlib
+target_sources(mobilenet_gtsrb_batch PRIVATE 
+  ${CMAKE_CURRENT_LIST_DIR}/firmware/main_batch.cpp
+  ${CMAKE_CURRENT_LIST_DIR}/firmware/model_settings.cpp
 )
-
-pico_enable_stdio_usb(mobilenet_gtsrb 1)
-pico_enable_stdio_uart(mobilenet_gtsrb 1)
-
-pico_add_extra_outputs(mobilenet_gtsrb)
+target_link_libraries(mobilenet_gtsrb_batch pico-tflmicro pico_stdlib)
+pico_enable_stdio_usb(mobilenet_gtsrb_batch 1)
+pico_enable_stdio_uart(mobilenet_gtsrb_batch 1)
+pico_add_extra_outputs(mobilenet_gtsrb_batch)
