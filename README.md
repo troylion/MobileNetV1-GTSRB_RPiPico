@@ -96,14 +96,16 @@ cmake ..
 
 # Build the specific executable you want
 make mobilenet_gtsrb_batch
-make mobilenet_gtsrb_golden
+make mobilenet_gtsrb_golden_single_core
 ```
 This process will generate files in the `build/` directory. There are two primary targets:
 
 - **`mobilenet_gtsrb_batch.uf2`**: This is the SWIFI-enabled firmware. When booted, it expects serial input (`INJECT:...`) from the Python host scripts before it will evaluate the dataset.
-- **`mobilenet_gtsrb_golden.uf2`**: This is the clean baseline firmware. It runs autonomously on its own without SWIFI fault injection or serial input. Use this to establish a baseline or if you are doing GDB fault injection.
+- **`mobilenet_gtsrb_golden_single_core.uf2`**: This is a clean, continuous inference binary with **no programmatic fault injection**. It runs autonomously on its own to establish a baseline. It is intentionally built as a single-core binary so that external hardware debuggers (like OpenOCD) can halt the processor without crashing.
 
-Each target also generates an `.elf` file (e.g., `mobilenet_gtsrb_golden.elf`), which is useful for debugging with GDB or OpenOCD.
+Each target also generates an `.elf` file (e.g., `mobilenet_gtsrb_batch.elf`), which is useful for debugging with GDB or OpenOCD.
+
+*(Note: If you are looking for `mobilenet_gtsrb_pico2.uf2` to test this experiment on a Raspberry Pi Pico 2, you must configure CMake specifically for the RP2350 board by running `cmake -DPICO_BOARD=pico2 ..` instead of the standard `cmake ..` command.)*
 
 ### 3. Flash and Run on the Raspberry Pi Pico
 1. While unplugged, hold down the **BOOTSEL** button on your Raspberry Pi Pico.
