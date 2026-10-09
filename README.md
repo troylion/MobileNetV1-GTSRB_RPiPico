@@ -138,10 +138,10 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 If you use this repository or SWIFI framework in your research in the meantime, please cite this repository directly:
 
 ```bibtex
-@misc{MobileNet_GTSRB_SWIFI_2024,
-  author = {Your Name/Institution},
+@misc{MobileNet_GTSRB_SWIFI_2026,
+  author = {Kristian Bailey},
   title = {MobileNetV1 GTSRB Fault Injection on Raspberry Pi Pico},
-  year = {2024},
+  year = {2026},
   publisher = {GitHub},
   journal = {GitHub repository},
   howpublished = {\url{https://github.com/troylion/MobileNetV1-GTSRB_RPiPico}}
