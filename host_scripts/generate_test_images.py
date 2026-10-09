@@ -5,8 +5,8 @@ from PIL import Image
 # Configuration
 SOURCE_DIR = r"c:\picoApps\MobileNetTest\test_images"
 OUTPUT_FILES = [
-    r"c:\picoApps\mobilenet-gtsrb-swifi\firmware\test_images.h",
-    r"c:\picoApps\MobileNetTest\test_images.h"
+    r"c:\picoApps\mobilenet-gtsrb-swifi\firmware\test_images_unbiased.h",
+    r"c:\picoApps\MobileNetTest\test_images_unbiased.h"
 ]
 IMAGES_PER_CLASS = 6 # 6 * 43 = 258, but we will cap at 250
 MAX_IMAGES = 250
@@ -66,8 +66,8 @@ for output_file in OUTPUT_FILES:
     with open(output_file, "w") as f:
         f.write(f"// Auto-generated test images for GTSRB batch testing\n")
         f.write(f"// Contains {num_images} test images (32x32 RGB) - Up to {IMAGES_PER_CLASS} per class\n\n")
-        f.write("#ifndef TEST_IMAGES_H_\n")
-        f.write("#define TEST_IMAGES_H_\n\n")
+        f.write("#ifndef TEST_IMAGES_UNBIASED_H_\n")
+        f.write("#define TEST_IMAGES_UNBIASED_H_\n\n")
         
         f.write(f"#define NUM_TEST_IMAGES {num_images}\n")
         f.write(f"#define IMAGE_SIZE 3072\n")
@@ -112,6 +112,6 @@ for output_file in OUTPUT_FILES:
                 f.write("\n")
         f.write("};\n\n")
         
-        f.write("#endif  // TEST_IMAGES_H_\n")
+        f.write("#endif  // TEST_IMAGES_UNBIASED_H_\n")
 
     print(f"Successfully generated {output_file}!")
