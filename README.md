@@ -1,6 +1,8 @@
 # MobileNetV1 GTSRB Fault Injection Experiment
 
-This repository contains the code and scripts needed to replicate the Software Implemented Fault Injection (SWIFI) experiment on a MobileNetV1 model classifying the German Traffic Sign Recognition Benchmark (GTSRB) dataset. The experiment runs on a Raspberry Pi Pico (RP2040/RP2350) using TensorFlow Lite for Microcontrollers (TFLM).
+This repository contains the code and scripts needed to replicate the Software Implemented Fault Injection (SWIFI) experiment on a MobileNetV1 model classifying the German Traffic Sign Recognition Benchmark (GTSRB) dataset. The experiment runs on a Raspberry Pi Pico (RP2040) using TensorFlow Lite for Microcontrollers (TFLM).
+
+*Note: This experiment currently works on the original Raspberry Pi Pico (RP2040). It has not yet been tested on the Raspberry Pi Pico 2 (RP2350).*
 
 ## Experiment Overview
 
