@@ -38,6 +38,8 @@ If you are setting up this repository from scratch, your directory should be org
 ## File Explanations & Requirements
 
 ### 1. C++ Firmware (Raspberry Pi Pico)
+*Role: This is the base program running on the microcontroller that tests the embedded images against the neural network model.*
+
 These files are compiled using the Pico SDK and TFLite Micro framework and flashed to the microcontroller.
 * **`main_batch.cpp`**: The primary executable needed. It initializes the model in RAM, listens over USB Serial for `INJECT:<tensor>,<byte>,<bit>` commands, modifies the tensor in RAM, runs inference on all test images, reports the overall accuracy (and specific accuracy for Class 14: Stop Signs), and restores the memory.
 * **`main_golden.cpp`**: A clean baseline implementation. It does not contain fault injection logic. It is useful for establishing the base accuracy or using hardware debuggers (like GDB/OpenOCD) to manually halt and inspect state.
@@ -46,7 +48,9 @@ These files are compiled using the Pico SDK and TFLite Micro framework and flash
 * **`model_settings.*`**: Definitions for image input dimensions (32x32 RGB) and category labels (43 traffic sign classes).
 
 ### 2. Python Host Scripts
-These scripts run on your PC. They require `pyserial`, `numpy`, `tflite`, and `flatbuffers`.
+*Role: These scripts orchestrate the fault injections. They run on your PC and send the targeted bit-flip commands to the Pico over USB Serial.*
+
+These scripts require `pyserial`, `numpy`, `tflite`, and `flatbuffers`.
 * **`fault_injector.py`**: The "brain" of the fault calculation. It loads the original `.tflite` model, parses the flatbuffer to map tensor indices to exact file/byte offsets, and handles data type conversions (int8, float32, etc.) to figure out exactly which byte and bit need flipping to simulate an error in a specific weight.
 * **`run_campaign.py`**: Connects to a single Pico via COM port. It repeatedly queries `fault_injector.py` for random fault parameters, sends the fault to the Pico via Serial, waits for the accuracy result, and logs it to a CSV.
 * **`run_campaign_parallel.py` & `run_tensor_sweep.py`**: Multi-threaded versions of the campaign script. They detect multiple Picos plugged into the host and distribute the fault queue across them. `run_tensor_sweep.py` explicitly cycles through every weight tensor in the model to find the most vulnerable layers.
@@ -70,7 +74,7 @@ Microcontrollers do not have traditional file systems. Instead, the `.tflite` mo
 ### How to use a different model or dataset:
 If you want to run this experiment on a different neural network (like ResNet) or a different dataset (like CIFAR-10), you can simply swap out these header files:
 1. Train and quantize your new `.tflite` model.
-2. Use a command line tool like `xxd` to convert your `.tflite` file into a C-array (e.g., `xxd -i my_new_model.tflite > model_data.h`).
+2. Use a command line tool like `xxd` to convert your `.tflite` file into a C-array (e.g., `xxd -i my_new_model.tflite > model_data.h`). *(Note: If you are on Windows, `xxd` is not a native command in CMD or PowerShell. You will need to run this command in **Git Bash** or WSL).*
 3. Convert your new test images into a similar C-array format and replace `test_images.h`.
 4. Update `model_settings.h` to reflect the new image dimensions, number of channels, and category count.
 5. Recompile your firmware using CMake and flash the new `.uf2` file to the Pico!
