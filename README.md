@@ -104,7 +104,7 @@ This process will generate several files in the `build/` directory, including:
 ### 3. Flash and Run on the Raspberry Pi Pico
 1. While unplugged, hold down the **BOOTSEL** button on your Raspberry Pi Pico.
 2. While continuing to hold BOOTSEL, plug the Pico into your computer's USB port.
-3. Release the BOOTSEL button. The Pico will mount as a USB Mass Storage Device (usually named `RPI-RP2`).
+3. Release the BOOTSEL button. The Pico will mount as a USB Mass Storage Device named `RPI-RP2` (the default for the RP2040).
 4. Drag and drop the `mobilenet_gtsrb.uf2` file onto the `RPI-RP2` drive.
 5. The Pico will automatically disconnect, reboot, and immediately start running the firmware.
 
